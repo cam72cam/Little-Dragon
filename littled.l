@@ -6,8 +6,8 @@
 %%
 
 
-[0-9]+		return NUM;
-[a-zA-Z]+	return IDENT;
+[0-9]+		yylval.number = atof(yytext); return NUM;
+[a-zA-Z]+	yylval.string = yytext; return IDENT;
 
 \(			return RPAREN;
 \)			return LPAREN;
@@ -16,7 +16,8 @@
 \-			return SUBOP;
 \*			return MULOP;
 
-=			return ASSIGNOP;
+\=			return ASSIGNOP;
+\>			return PRINTOP;
 
 \n                      /* ignore end of line */;
 [ \t]+                  /* ignore whitespace */;

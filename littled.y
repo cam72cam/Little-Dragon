@@ -1,7 +1,9 @@
 %{
 #include <stdio.h>
 #include <string.h>
- 
+#include "tree.h"
+#define YYSTYPE tree_t*
+
 void yyerror(const char *str)
 {
         fprintf(stderr,"error: %s\n",str);
@@ -10,7 +12,7 @@ void yyerror(const char *str)
 int yywrap()
 {
         return 1;
-} 
+}
   
 main()
 {
@@ -20,7 +22,17 @@ main()
 
 %}
 
-%token NUM IDENT RPAREN LPAREN ADDOP SUBOP MULOP ASSIGNOP
+%token RPAREN LPAREN ADDOP SUBOP MULOP ASSIGNOP PRINTOP IDENT NUM
+
+%union 
+{
+	double number;
+	char *string;
+}
+
+%type<number> NUM
+%type<string> IDENT
+
 %%
 
 commands:
@@ -29,10 +41,15 @@ commands:
 	commands command { printf("commands\n"); }
 	;
 command:
+	PRINTOP print
+	|
 	expr
 	|
-	stmt 
+	stmt
 	;
+
+print:
+	 expr { printf("print"); }
 
 stmt:
 	ASSIGNOP IDENT expr { printf("stmt\n");}
@@ -43,7 +60,7 @@ expr:
 expr_:
 	/*empty*/
 	|
-	ADDOP term expr_ { printf("addop\n"); }
+	ADDOP term expr_ { printf("addop\n"); $$=$2}
 	|
 	SUBOP term expr_ {printf("subop\n");}
 	;
@@ -56,11 +73,11 @@ term_:
 	MULOP term { printf("mulop\n"); }
 	;
 factor:
-	RPAREN expr LPAREN { printf("(expr)\n");}
+	RPAREN expr LPAREN { printf("(expr)\n"); $$=$2; }
 	|
-	NUM { printf("num\n"); }
+	NUM { printf("num %d\n", $1); $$=make_tree(0,NULL,NULL); }
 	|
-	IDENT { printf("ident\n"); }
+	IDENT { printf("ident %s\n", $1); $$=1; } /*TODO LOOKUP*/
 	;
 
 %%
