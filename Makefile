@@ -1,5 +1,5 @@
 main: lex yacc
-	cc lex.yy.c y.tab.c -o littled
+	cc lex.yy.c y.tab.c tree.c -o littled -DYYSTYPE=tree_t*
 lex: littled.l
 	lex littled.l
 yacc: littled.y
