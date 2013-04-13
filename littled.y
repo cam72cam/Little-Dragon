@@ -20,7 +20,6 @@ int yywrap()
   
 main()
 {
-	printf("start\n");
 	yyparse();
 } 
 
@@ -39,7 +38,7 @@ command:
 print:
 	 PRINTOP expr { print_tree($2, 0); }
 stmt:
-	IDENT ASSIGNOP expr { printf("stmt\n"); $$ = $1; $$ -> left = $3; print_tree($$, 0); }
+	IDENT ASSIGNOP expr { $$ = $1; $$ -> left = $3; print_tree($$, 0); }
 	;
 expr:
 	term expr_
